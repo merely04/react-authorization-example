@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Authentication API
+  version: 1.0.0
+  description: API for user authentication with optional Two-Factor Authentication (TFA)
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /auth/login:
+    post:
+      summary: Initiate login with email and password
+      description: |
+        Authenticates the user with email and password.
+        If the user has TFA enabled, returns a `tfa_required` response with a `tfa_session_id`.
+        Otherwise, returns a JWT access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful (TFA not enabled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        '202':
+          description: TFA required to complete login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TfaRequiredResponse'
+        '400':
+          description: Bad request (e.g., missing or invalid fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials (wrong email or password)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many login attempts (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login/tfa:
+    post:
+      summary: Complete login with TFA code
+      description: |
+        Submits the TFA code (e.g., 6-digit OTP) to complete authentication.
+        Requires a valid `tfa_session_id` from the `/auth/login` response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TfaVerificationRequest'
+      responses:
+        '200':
+          description: TFA verification successful; login completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        '400':
+          description: Bad request (e.g., missing fields, invalid TFA code format)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: |
+            Invalid or expired TFA session, or incorrect TFA code.
+            After too many failed attempts, the session may be invalidated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: TFA session not found (e.g., already used or expired)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many TFA attempts (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: s3cr3tP@ssw0rd!
+
+    TfaVerificationRequest:
+      type: object
+      required:
+        - tfa_session_id
+        - tfa_code
+      properties:
+        tfa_session_id:
+          type: string
+          description: Session ID returned from the initial login request
+          example: 'a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8'
+        tfa_code:
+          type: string
+          description: One-time password (usually 6 digits)
+          pattern: '^\d{6}$'
+          example: '123456'
+
+    LoginSuccessResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT Bearer token for authenticated requests
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        token_type:
+          type: string
+          example: 'Bearer'
+        expires_in:
+          type: integer
+          description: Token lifetime in seconds
+          example: 3600
+
+    TfaRequiredResponse:
+      type: object
+      properties:
+        tfa_required:
+          type: boolean
+          example: true
+        tfa_session_id:
+          type: string
+          description: Temporary session ID to be used in the TFA verification step
+          example: 'a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8'
+        message:
+          type: string
+          example: 'Two-factor authentication is required'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: 'Invalid email or password'
+        code:
+          type: string
+          description: Machine-readable error code
+          example: 'INVALID_CREDENTIALS'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

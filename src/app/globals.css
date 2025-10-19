@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-bg-layout: var(--ant-color-bg-layout);
+	--color-bg-container: #ffffff;
+}
+
+.custom-input-large-height .ant-input.ant-input-lg {
+	/* --ant-input-padding-block-lg: 18px; */
+	--ant-input-input-font-size-lg: 24px;
+}

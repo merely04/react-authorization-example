@@ -1,0 +1,58 @@
+{
+	"name": "react-authorization-example",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"build:api": "bun openapi",
+		"lint": "eslint .",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@ant-design/icons": "^6.1.0",
+		"@ant-design/v5-patch-for-react-19": "^1.0.3",
+		"@effector-reform/core": "^0.16.0",
+		"@effector-reform/react": "^0.16.0",
+		"@effector-reform/yup": "^0.16.0",
+		"@tailwindcss/vite": "^4.1.14",
+		"antd": "^5.27.5",
+		"atomic-router": "^0.12.0",
+		"atomic-router-react": "^0.12.1",
+		"clsx": "^2.1.1",
+		"effector": "^23.4.4",
+		"effector-react": "^23.3.0",
+		"history": "^5.3.0",
+		"ky": "^1.12.0",
+		"patronum": "^2.3.0",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"rollup-plugin-visualizer": "^6.0.5",
+		"tailwindcss": "^4.1.14",
+		"typed-contracts": "^3.0.0",
+		"vite-plugin-svgr": "^4.5.0",
+		"yup": "^1.7.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.36.0",
+		"@mere1y/effector-openapi-preset": "^0.4.2",
+		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
+		"@types/node": "^24.6.0",
+		"@types/react": "^19.1.16",
+		"@types/react-dom": "^19.1.9",
+		"@vitejs/plugin-react": "^5.0.4",
+		"eslint": "^9.36.0",
+		"eslint-plugin-react-hooks": "^5.2.0",
+		"eslint-plugin-react-refresh": "^0.4.22",
+		"globals": "^16.4.0",
+		"openapi": "^1.0.1",
+		"prettier": "^3.6.2",
+		"typescript": "~5.9.3",
+		"typescript-eslint": "^8.45.0",
+		"vite": "npm:rolldown-vite@7.1.14"
+	},
+	"overrides": {
+		"vite": "npm:rolldown-vite@7.1.14"
+	}
+}
