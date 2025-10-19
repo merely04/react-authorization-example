@@ -6,6 +6,7 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vite.dev/config/
 export default defineConfig({
+	base: '/react-authorization-example/',
 	plugins: [
 		svgr({
 			include: '**/*.svg',

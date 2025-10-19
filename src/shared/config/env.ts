@@ -17,4 +17,4 @@ export const IS_PROD = import.meta.env.PROD;
 
 export const API_URL = getEnvVar('VITE_API_URL', '/api');
 
-export const USE_MOCK_API = getEnvVar('VITE_USE_MOCK_API', 'false') === 'true';
+export const USE_MOCK_API = getEnvVar('VITE_USE_MOCK_API', 'true') === 'true';
